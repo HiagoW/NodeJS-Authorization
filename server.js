@@ -7,6 +7,7 @@ require('./redis/blocklist-access-token')
 require('./redis/allowlist-refresh-token')
 
 const { InvalidArgumentError, NaoEncontrado, NaoAutorizado } = require('./src/erros')
+const { ConversorErro } = require('./src/conversores')
 const jwt = require('jsonwebtoken')
 
 app.use((requisicao, resposta, proximo) => {
@@ -56,7 +57,8 @@ app.use((erro, requisicao, resposta, proximo) => {
   }
 
   resposta.status(status)
-  resposta.json(corpo)
+  const conversor = new ConversorErro('json')
+  resposta.send(conversor.converter(corpo))
 })
 
 app.listen(port, () => console.log('A API está funcionando!'))
